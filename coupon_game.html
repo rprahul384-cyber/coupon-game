@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cheezy Coupon Spin</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background: #fff8e7; }
+    h1 { color: #ff6600; }
+    #wheel { width: 300px; height: 300px; border-radius: 50%; border: 10px solid #333; margin: 20px auto; position: relative; }
+    #spinBtn { padding: 10px 20px; font-size: 18px; background: #ff6600; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    #result { font-size: 20px; margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>🎉 Spin & Win with Cheezy 🎉</h1>
+  <canvas id="wheel" width="300" height="300"></canvas>
+  <br>
+  <button id="spinBtn">SPIN</button>
+  <div id="result"></div>
+
+  <script>
+    const canvas = document.getElementById('wheel');
+    const ctx = canvas.getContext('2d');
+    const prizes = ["Free ₹5 Pack", "₹10 Off Coupon", "Try Again", "Buy 5 Get 1 Free", "Free ₹50 Pack", "Cheezy Goodies"];
+    let angle = 0;
+
+    function drawWheel() {
+      const sliceAngle = 2 * Math.PI / prizes.length;
+      for (let i = 0; i < prizes.length; i++) {
+        ctx.beginPath();
+        ctx.moveTo(150, 150);
+        ctx.arc(150, 150, 150, sliceAngle * i, sliceAngle * (i+1));
+        ctx.fillStyle = i % 2 === 0 ? "#ffd966" : "#ffb366";
+        ctx.fill();
+        ctx.save();
+        ctx.translate(150, 150);
+        ctx.rotate(sliceAngle * (i + 0.5));
+        ctx.fillStyle = "#000";
+        ctx.font = "14px Arial";
+        ctx.fillText(prizes[i], 30, 0);
+        ctx.restore();
+      }
+    }
+
+    drawWheel();
+
+    document.getElementById('spinBtn').addEventListener('click', () => {
+      const spinAngle = Math.random() * 360 + 720; // random spin
+      angle += spinAngle;
+      canvas.style.transition = 'transform 3s ease-out';
+      canvas.style.transform = `rotate(${angle}deg)`;
+      setTimeout(() => {
+        const normalizedAngle = angle % 360;
+        const sliceAngle = 360 / prizes.length;
+        const winningIndex = Math.floor((360 - normalizedAngle) / sliceAngle) % prizes.length;
+        document.getElementById('result').innerText = `🎁 You won: ${prizes[winningIndex]}!`;
+      }, 3000);
+    });
+  </script>
+</body>
+</html>
